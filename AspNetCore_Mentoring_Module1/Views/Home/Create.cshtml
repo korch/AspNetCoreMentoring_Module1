@@ -1,4 +1,4 @@
-﻿@model AspNetCore_Mentoring_Module1.Products
+﻿@model Tuple<AspNetCore_Mentoring_Module1.Products, Categories, IEnumerable<AspNetCore_Mentoring_Module1.Categories>, Suppliers, IEnumerable<AspNetCore_Mentoring_Module1.Suppliers>>
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,40 +8,40 @@
 
 <form asp-action="create" asp-controller="home">
     <div class="form-group">
-        <label asp-for="ProductName" class="control-label">Name</label>
-        <input type="text" asp-for="ProductName" class="form-control" />
+        <label asp-for="@Model.Item1.ProductName" class="control-label">Name</label>
+        <input type="text" asp-for="@Model.Item1.ProductName" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="SupplierId" class="control-label">SupplierId</label>
-        <input type="number" asp-for="SupplierId" class="form-control" />
+        <label asp-for="@Model.Item1.SupplierId" class="control-label">Supplier</label>
+        <select  class="form-control" asp-for="@Model.Item2.CategoryId" asp-items="@(new SelectList(@Model.Item3, "CategoryId", "CategoryName"))"></select>
     </div>
     <div class="form-group">
-        <label asp-for="CategoryId" class="control-label">CategoryId</label>
-        <input type="number" asp-for="CategoryId" class="form-control" />
+        <label asp-for="@Model.Item1.CategoryId" class="control-label">Category</label>
+        <select class="form-control" asp-for="@Model.Item4.SupplierId" asp-items="@(new SelectList(@Model.Item5, "SupplierId", "CompanyName"))"></select>
     </div>
     <div class="form-group">
-        <label asp-for="QuantityPerUnit" class="control-label">QuantityPerUnit</label>
-        <input type="number" asp-for="QuantityPerUnit" class="form-control" />
+        <label asp-for="@Model.Item1.QuantityPerUnit" class="control-label">QuantityPerUnit</label>
+        <input type="number" asp-for="@Model.Item1.QuantityPerUnit" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="UnitPrice" class="control-label">UnitPrice</label>
-        <input type="number" asp-for="UnitPrice" class="form-control" />
+        <label asp-for="@Model.Item1.UnitPrice" class="control-label">UnitPrice</label>
+        <input type="number" asp-for="@Model.Item1.UnitPrice" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="UnitsInStock" class="control-label">UnitsInStock</label>
-        <input type="number" asp-for="UnitsInStock" class="form-control" />
+        <label asp-for="@Model.Item1.UnitsInStock" class="control-label">UnitsInStock</label>
+        <input type="number" asp-for="@Model.Item1.UnitsInStock" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="UnitsOnOrder" class="control-label">UnitsOnOrder</label>
-        <input type="number" asp-for="UnitsOnOrder" class="form-control" />
+        <label asp-for="@Model.Item1.UnitsOnOrder" class="control-label">UnitsOnOrder</label>
+        <input type="number" asp-for="@Model.Item1.UnitsOnOrder" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="ReorderLevel" class="control-label">ReorderLevel</label>
-        <input type="number" asp-for="ReorderLevel" class="form-control" />
+        <label asp-for="@Model.Item1.ReorderLevel" class="control-label">ReorderLevel</label>
+        <input type="number" asp-for="@Model.Item1.ReorderLevel" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="Discontinued" class="control-label">Discontinued</label>
-        <input type="number" asp-for="Discontinued" class="form-control" />
+        <label asp-for="@Model.Item1.Discontinued" class="control-label">Discontinued</label>
+        <input type="number" asp-for="@Model.Item1.Discontinued" class="form-control" />
     </div>  
     <div class="form-group">
         <input type="submit" value="Create" class="btn btn-default" />

@@ -1,0 +1,62 @@
+﻿@model AspNetCore_Mentoring_Module1.Models.ProductPagingViewModel
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Products</h1>
+
+<a asp-action="Create">Create a new product</a>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Category</th>
+            <th scope="col">QuantityPerUnit</th>
+            <th scope="col">UnitPrice</th>
+            <th scope="col">UnitsInStock</th>
+            <th scope="col">UnitsOnOrder</th>
+            <th scope="col">ReorderLevel</th>
+            <th scope="col">Discontinued</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td>@product.ProductId</td>
+                <td>@product.ProductName</td>
+                <td>@product.Supplier</td>
+                <td>@product.Category</td>
+                <td>@product.QuantityPerUnit</td>
+                <td>@product.UnitPrice</td>
+                <td>@product.UnitsInStock</td>
+                <td>@product.UnitsOnOrder</td>
+                <td>@product.ReorderLevel</td>
+                <td>@product.Discontinued</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Products"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Previous
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Products"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        Next
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

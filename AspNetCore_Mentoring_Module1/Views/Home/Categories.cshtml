@@ -1,0 +1,27 @@
+﻿@model IEnumerable<AspNetCore_Mentoring_Module1.Categories>
+@{
+    ViewData["Title"] = "Categories";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Here you can see a list of Category.</p>
+
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var category in Model)
+    {
+        <tr>
+            <td>@category.CategoryId</td>
+            <td>@category.CategoryName</td>
+            <td>@category.Description</td>
+        </tr>
+    }
+    </tbody>
+</table>

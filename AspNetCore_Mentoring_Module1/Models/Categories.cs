@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspNetCore_Mentoring_Module1
 {
@@ -10,6 +11,7 @@ namespace AspNetCore_Mentoring_Module1
             Products = new HashSet<Products>();
         }
 
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }

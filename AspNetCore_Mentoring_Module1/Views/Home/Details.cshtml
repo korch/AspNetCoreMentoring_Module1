@@ -1,0 +1,22 @@
+﻿@model Products
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+@{
+    ViewBag.Title = Model.ProductName;
+}
+<h2>Product: @Model.ProductName</h2>
+<div>
+    <dl class="dl-horizontal">
+        <dt>Id</dt>
+        <dd>@Model.ProductId</dd>
+
+        <dt>ProductName</dt>
+        <dd>@Model.ProductName</dd>
+    </dl>
+</div>
+

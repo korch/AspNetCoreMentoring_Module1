@@ -57,18 +57,104 @@ namespace AspNetCore_Mentoring_Module1.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var productModel = new ProductModel() { 
+                Categories = await _dbContext.Categories.ToListAsync(),
+                Suppliers = await _dbContext.Suppliers.ToListAsync()
+            };
+
+            return View(productModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Products product)
         {
-            _dbContext.Products.Add(product);
+            if(ModelState.IsValid) {
+                _dbContext.Products.Add(product);
+                await _dbContext.SaveChangesAsync();
+
+                return RedirectToAction("Products");
+            }
+
+            return View(product);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id != null)
+            {
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+                if (product != null)
+                    return View(product);
+            }
+            return NotFound();
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+          
+            if (id != null) {
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+
+                if (product != null) {
+                    var model = new ProductModel {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        SupplierId = product.SupplierId,
+                        CategoryId = product.CategoryId,
+                        QuantityPerUnit = product.QuantityPerUnit,
+                        UnitPrice = product.UnitPrice,
+                        UnitsInStock = product.UnitsInStock,
+                        UnitsOnOrder = product.UnitsOnOrder,
+                        ReorderLevel = product.ReorderLevel,
+                        Discontinued = product.Discontinued
+                    };
+
+                    return View(model);
+                }
+                  
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Products user)
+        {
+            _dbContext.Products.Update(user);
             await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Products");
+        }
+
+
+        [HttpGet]
+        [ActionName("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int? id)
+        {
+            if (id != null)
+            {
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+                if (product != null)
+                    return View(product);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null) {
+                var product = new Products { ProductId = id.Value };
+
+                _dbContext.Entry(product).State = EntityState.Deleted;
+
+                await _dbContext.SaveChangesAsync();
+
+                return RedirectToAction("Products"); 
+            }
+
+            return NotFound();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -82,14 +168,14 @@ namespace AspNetCore_Mentoring_Module1.Controllers
             var model = new List<ProductModel>();
 
             await Task.Run(() => products.ForEach(item => {
-                var supplier = _dbContext.Suppliers.FirstOrDefault(s => s.SupplierId == item.SupplierId)?.CompanyName;
-                var category = _dbContext.Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId)?.CategoryName;
+                var supplierName = _dbContext.Suppliers.FirstOrDefault(s => s.SupplierId == item.SupplierId)?.CompanyName;
+                var categoryName = _dbContext.Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId)?.CategoryName;
 
                 model.Add(new ProductModel {
                     ProductId = item.ProductId,
                     ProductName = item.ProductName,
-                    Supplier = supplier,
-                    Category = category,
+                    SupplierName = supplierName,
+                    CategoryName = categoryName,
                     QuantityPerUnit = item.QuantityPerUnit,
                     UnitPrice = item.UnitPrice,
                     UnitsInStock = item.UnitsInStock,

@@ -93,7 +93,6 @@ namespace AspNetCore_Mentoring_Module1.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
-          
             if (id != null) {
                 var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
 
@@ -108,20 +107,21 @@ namespace AspNetCore_Mentoring_Module1.Controllers
                         UnitsInStock = product.UnitsInStock,
                         UnitsOnOrder = product.UnitsOnOrder,
                         ReorderLevel = product.ReorderLevel,
-                        Discontinued = product.Discontinued
+                        Discontinued = product.Discontinued,
+                        Categories = await _dbContext.Categories.ToListAsync(),
+                        Suppliers = await _dbContext.Suppliers.ToListAsync()
                     };
 
                     return View(model);
-                }
-                  
+                }   
             }
             return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Products user)
+        public async Task<IActionResult> Edit(Products product)
         {
-            _dbContext.Products.Update(user);
+            _dbContext.Products.Update(product);
             await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Products");

@@ -7,8 +7,12 @@
 
 <h1>Edit</h1>
 
-<form asp-antiforgery="true" asp-action="edit" asp-controller="home" asp-route-id="@Model.ProductId">
+<form asp-antiforgery="true" asp-action="Edit" asp-controller="Home" asp-route-ProductId="@Model.ProductId">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="form-group">
+        <label asp-for="@Model.ProductId" class="control-label">ProductId</label>
+        <input type="text" asp-for="@Model.ProductId" class="form-control" disabled="disabled"/>
+    </div>
     <div class="form-group">
         <label asp-for="@Model.ProductName" class="control-label">Name</label>
         <input type="text" asp-for="@Model.ProductName" class="form-control" />
@@ -44,9 +48,8 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.Discontinued" class="control-label">Discontinued</label>
-        <input type="number" asp-for="@Model.Discontinued" class="form-control" />
+        <input type="checkbox" asp-for="@Model.Discontinued" class="form-control" />
         <span asp-validation-for="@Model.Discontinued"></span>
-
     </div>
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-default" />

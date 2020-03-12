@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "ConfirmDelete";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -20,7 +19,7 @@
     </dl>
 
     <div>
-        <form asp-controller="Home" asp-action="Delete" method="post">
+        <form asp-controller="Home" asp-action="Delete" method="post" asp-route-id="@Model.ProductId">
             <div class="form-group">
                 <input type="submit" class="btn btn-default" value="Delete" />
             </div>

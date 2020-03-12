@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore_Mentoring_Module1.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AspNetCore_Mentoring_Module1.Models;
@@ -15,18 +16,15 @@ namespace AspNetCore_Mentoring_Module1.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _configuration;
-        private int _numberOfItemsOnPage = 0;
+        private readonly IOptions _options;
 
         private NorthwindContext _dbContext;
 
-        public HomeController(ILogger<HomeController> logger, NorthwindContext context, IConfiguration config)
+        public HomeController(ILogger<HomeController> logger, NorthwindContext context, IOptionsProvider optionsProvider)
         {
             _logger = logger;
             _dbContext = context;
-            _configuration = config;
-
-            GetNumberOfItemsOnPage();
+            _options = optionsProvider.GetOptions();
         }
 
         public IActionResult Index()
@@ -42,13 +40,13 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         public async Task<IActionResult> Products(int page = 1)
         {
             var count = await _dbContext.Products.CountAsync();
-            var products = _numberOfItemsOnPage == 0
+            var products = _options.NumberOfItemsForPaging == 0
                 ? await _dbContext.Products.ToListAsync()
-                : await _dbContext.Products.Skip((page - 1) * _numberOfItemsOnPage).Take(_numberOfItemsOnPage)
+                : await _dbContext.Products.Skip((page - 1) * _options.NumberOfItemsForPaging).Take(_options.NumberOfItemsForPaging)
                     .ToListAsync();
 
             var preparedData = PrepareData(products);
-            var pageViewModel = new PageViewModel(count, page, _numberOfItemsOnPage);
+            var pageViewModel = new PageViewModel(count, page, _options.NumberOfItemsForPaging);
             var viewModel = new ProductPagingViewModel {
                 PageViewModel = pageViewModel,
                 Products = preparedData.Result
@@ -70,14 +68,39 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Products product)
         {
+            if (string.IsNullOrEmpty(product.QuantityPerUnit))
+            {
+                ModelState.AddModelError("QuantityPerUnit", "QuantityPerUnit field cannot be empty");
+            }
+            if (product.UnitsInStock > 100)
+            {
+                ModelState.AddModelError("", "Unit in stock field cannot be more then 100");
+            }
+
             if(ModelState.IsValid) {
                 _dbContext.Products.Add(product);
                 await _dbContext.SaveChangesAsync();
 
                 return RedirectToAction("Products");
-            }
+            } else {
+                var model = new ProductModel
+                {
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    SupplierId = product.SupplierId,
+                    CategoryId = product.CategoryId,
+                    QuantityPerUnit = product.QuantityPerUnit,
+                    UnitPrice = product.UnitPrice,
+                    UnitsInStock = product.UnitsInStock,
+                    UnitsOnOrder = product.UnitsOnOrder,
+                    ReorderLevel = product.ReorderLevel,
+                    Discontinued = product.Discontinued,
+                    Categories = await _dbContext.Categories.ToListAsync(),
+                    Suppliers = await _dbContext.Suppliers.ToListAsync()
+                };
 
-            return View(product);
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -127,17 +150,30 @@ namespace AspNetCore_Mentoring_Module1.Controllers
             return RedirectToAction("Products");
         }
 
-
         [HttpGet]
-        [ActionName("Delete")]
         public async Task<IActionResult> ConfirmDelete(int? id)
         {
-            if (id != null)
-            {
+            if (id != null) {
                 var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
-                if (product != null)
-                    return View(product);
+                if (product != null) {
+                    var model = new ProductModel {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        SupplierId = product.SupplierId,
+                        CategoryId = product.CategoryId,
+                        QuantityPerUnit = product.QuantityPerUnit,
+                        UnitPrice = product.UnitPrice,
+                        UnitsInStock = product.UnitsInStock,
+                        UnitsOnOrder = product.UnitsOnOrder,
+                        ReorderLevel = product.ReorderLevel,
+                        Discontinued = product.Discontinued,
+                        Categories = await _dbContext.Categories.ToListAsync(),
+                        Suppliers = await _dbContext.Suppliers.ToListAsync()
+                    };
+                    return View(model);
+                }
             }
+
             return NotFound();
         }
 
@@ -186,11 +222,6 @@ namespace AspNetCore_Mentoring_Module1.Controllers
             }));
 
             return model;
-        }
-
-        private void GetNumberOfItemsOnPage()
-        {
-            _numberOfItemsOnPage = int.Parse(_configuration.GetSection("M-Products").GetSection("Count").Value);
         }
     }
 }

@@ -24,6 +24,7 @@
     <div class="form-group">
         <label asp-for="@Model.QuantityPerUnit" class="control-label">QuantityPerUnit</label>
         <input type="text" asp-for="@Model.QuantityPerUnit" class="form-control" />
+        @Html.ValidationMessage("QuantityPerUnit")
     </div>
     <div class="form-group">
         <label asp-for="@Model.UnitPrice" class="control-label">UnitPrice</label>
@@ -40,10 +41,11 @@
     <div class="form-group">
         <label asp-for="@Model.ReorderLevel" class="control-label">ReorderLevel</label>
         <input type="number" asp-for="@Model.ReorderLevel" class="form-control" />
+        <span asp-validation-for="@Model.ReorderLevel"></span>
     </div>
     <div class="form-group">
         <label asp-for="@Model.Discontinued" class="control-label">Discontinued</label>
-        <input type="number" asp-for="@Model.Discontinued" class="form-control" />
+        <input type="checkbox" asp-for="@Model.Discontinued" class="form-control" />
         <span asp-validation-for="@Model.Discontinued"></span>
 
     </div>
@@ -57,5 +59,12 @@
 
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"
+            asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.validator">
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"
+            asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
+    </script>
 }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore_Mentoring_Module1.Classes;
+using AspNetCore_Mentoring_Module1.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +31,11 @@ namespace AspNetCore_Mentoring_Module1
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
+
+
+            services.AddTransient<IOptions, Options>();
+            services.AddTransient<IOptionsProvider, OptionsProvider>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +55,7 @@ namespace AspNetCore_Mentoring_Module1
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -16,14 +16,24 @@ namespace AspNetCore_Mentoring_Module1.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IOptions _options;
-
+        private readonly IProductModelProvider _modelProvider;
         private NorthwindContext _dbContext;
 
-        public HomeController(ILogger<HomeController> logger, NorthwindContext context, IOptionsProvider optionsProvider)
+        private IEnumerable<Categories> _categories;
+        private IEnumerable<Suppliers> _suppliers;
+
+        private IEnumerable<Categories> CategoriesList => _categories ?? (_categories = _dbContext.Categories.ToList());
+        private IEnumerable<Suppliers> SuppliersList => _suppliers ?? (_suppliers = _dbContext.Suppliers.ToList());
+
+        public HomeController(ILogger<HomeController> logger, NorthwindContext context, IOptionsProvider optionsProvider, IProductModelProvider productModelProvider)
         {
             _logger = logger;
             _dbContext = context;
             _options = optionsProvider.GetOptions();
+            _logger.LogInformation("Read configuration: product item to display:{0}", _options.NumberOfItemsForPaging);
+            _modelProvider = productModelProvider;
+            _categories = _dbContext.Categories.ToList();
+            _suppliers = _dbContext.Suppliers.ToList();
         }
 
         public IActionResult Index()
@@ -33,7 +43,7 @@ namespace AspNetCore_Mentoring_Module1.Controllers
 
         public async Task<IActionResult> Categories()
         {
-            return View(await _dbContext.Categories.ToListAsync());
+            return View(CategoriesList);
         }
 
         public async Task<IActionResult> Products(int page = 1)
@@ -56,10 +66,10 @@ namespace AspNetCore_Mentoring_Module1.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var productModel = new ProductModel() { 
-                Categories = await _dbContext.Categories.ToListAsync(),
-                Suppliers = await _dbContext.Suppliers.ToListAsync()
-            };
+            var productModel = _modelProvider.GetProducts(null);
+
+            productModel.Categories = CategoriesList;
+            productModel.Suppliers = SuppliersList;
 
             return View(productModel);
         }
@@ -67,12 +77,14 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Products product)
         {
-            if (string.IsNullOrEmpty(product.QuantityPerUnit))
-            {
-                ModelState.AddModelError("QuantityPerUnit", "QuantityPerUnit field cannot be empty");
+            //server side validation property level
+            if (string.IsNullOrEmpty(product.QuantityPerUnit)) {
+                //ModelState.AddModelError("QuantityPerUnit", "QuantityPerUnit field cannot be empty");
+                throw new Exception("haha :)");
             }
-            if (product.UnitsInStock > 100)
-            {
+
+            //server side validation model level
+            if (product.UnitsInStock > 100) {
                 ModelState.AddModelError("", "Unit in stock field cannot be more then 100");
             }
 
@@ -82,22 +94,10 @@ namespace AspNetCore_Mentoring_Module1.Controllers
 
                 return RedirectToAction("Products");
             } else {
-                var model = new ProductModel
-                {
-                    ProductId = product.ProductId,
-                    ProductName = product.ProductName,
-                    SupplierId = product.SupplierId,
-                    CategoryId = product.CategoryId,
-                    QuantityPerUnit = product.QuantityPerUnit,
-                    UnitPrice = product.UnitPrice,
-                    UnitsInStock = product.UnitsInStock,
-                    UnitsOnOrder = product.UnitsOnOrder,
-                    ReorderLevel = product.ReorderLevel,
-                    Discontinued = product.Discontinued,
-                    Categories = await _dbContext.Categories.ToListAsync(),
-                    Suppliers = await _dbContext.Suppliers.ToListAsync()
-                };
-
+                var model = _modelProvider.GetProducts(product);
+                model.Categories = CategoriesList;
+                model.Suppliers = SuppliersList;
+            
                 return View(model);
             }
         }
@@ -119,20 +119,10 @@ namespace AspNetCore_Mentoring_Module1.Controllers
                 var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
 
                 if (product != null) {
-                    var model = new ProductModel {
-                        ProductId = product.ProductId,
-                        ProductName = product.ProductName,
-                        SupplierId = product.SupplierId,
-                        CategoryId = product.CategoryId,
-                        QuantityPerUnit = product.QuantityPerUnit,
-                        UnitPrice = product.UnitPrice,
-                        UnitsInStock = product.UnitsInStock,
-                        UnitsOnOrder = product.UnitsOnOrder,
-                        ReorderLevel = product.ReorderLevel,
-                        Discontinued = product.Discontinued,
-                        Categories = await _dbContext.Categories.ToListAsync(),
-                        Suppliers = await _dbContext.Suppliers.ToListAsync()
-                    };
+
+                    var model = _modelProvider.GetProducts(product);
+                    model.Categories = CategoriesList;
+                    model.Suppliers = SuppliersList;
 
                     return View(model);
                 }   
@@ -155,24 +145,13 @@ namespace AspNetCore_Mentoring_Module1.Controllers
             if (id != null) {
                 var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == id);
                 if (product != null) {
-                    var model = new ProductModel {
-                        ProductId = product.ProductId,
-                        ProductName = product.ProductName,
-                        SupplierId = product.SupplierId,
-                        CategoryId = product.CategoryId,
-                        QuantityPerUnit = product.QuantityPerUnit,
-                        UnitPrice = product.UnitPrice,
-                        UnitsInStock = product.UnitsInStock,
-                        UnitsOnOrder = product.UnitsOnOrder,
-                        ReorderLevel = product.ReorderLevel,
-                        Discontinued = product.Discontinued,
-                        Categories = await _dbContext.Categories.ToListAsync(),
-                        Suppliers = await _dbContext.Suppliers.ToListAsync()
-                    };
+                    var model = _modelProvider.GetProducts(product);
+                    model.Categories = CategoriesList;
+                    model.Suppliers = SuppliersList;
                     return View(model);
                 }
             }
-
+           
             return NotFound();
         }
 
@@ -206,18 +185,10 @@ namespace AspNetCore_Mentoring_Module1.Controllers
                 var supplierName = _dbContext.Suppliers.FirstOrDefault(s => s.SupplierId == item.SupplierId)?.CompanyName;
                 var categoryName = _dbContext.Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId)?.CategoryName;
 
-                model.Add(new ProductModel {
-                    ProductId = item.ProductId,
-                    ProductName = item.ProductName,
-                    SupplierName = supplierName,
-                    CategoryName = categoryName,
-                    QuantityPerUnit = item.QuantityPerUnit,
-                    UnitPrice = item.UnitPrice,
-                    UnitsInStock = item.UnitsInStock,
-                    UnitsOnOrder = item.UnitsOnOrder,
-                    ReorderLevel = item.ReorderLevel,
-                    Discontinued = item.Discontinued
-                });
+                var productModel = _modelProvider.GetProducts(item);
+                productModel.SupplierName = supplierName;
+                productModel.CategoryName = categoryName;
+                model.Add(productModel);
             }));
 
             return model;

@@ -9,7 +9,7 @@ namespace AspNetCore_Mentoring_Module1.Classes
 {
     public class Options : IOptions
     {
-        public int NumberOfItemsForPaging { get; set; }
+        public int NumberOfItemsForPaging { get; private set; }
 
         public Options(IConfiguration configuration)
         {

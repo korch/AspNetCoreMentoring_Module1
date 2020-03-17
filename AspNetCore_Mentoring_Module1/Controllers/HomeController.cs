@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using AspNetCore_Mentoring_Module1.Models;
 using AspNetCore_Mentoring_Module1.Models.OutputModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace AspNetCore_Mentoring_Module1.Controllers
 {

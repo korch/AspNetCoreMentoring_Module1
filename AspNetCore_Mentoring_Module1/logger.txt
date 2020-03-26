@@ -54,3 +54,16 @@ Read configuration: product item to display:7
 Read configuration: product item to display:7
 Read configuration: product item to display:7
 An unhandled exception has occurred while executing the request.
+Project start.... Project location: D:\CoreMentoring\AspNetCoreMentoring_Module1\AspNetCore_Mentoring_Module1
+Now listening on: http://127.0.0.1:33132
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: D:\CoreMentoring\AspNetCoreMentoring_Module1\AspNetCore_Mentoring_Module1
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7
+Read configuration: product item to display:7

@@ -79,8 +79,7 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         {
             //server side validation property level
             if (string.IsNullOrEmpty(product.QuantityPerUnit)) {
-                //ModelState.AddModelError("QuantityPerUnit", "QuantityPerUnit field cannot be empty");
-                throw new Exception("haha :)");
+                ModelState.AddModelError("QuantityPerUnit", "QuantityPerUnit field cannot be empty");  
             }
 
             //server side validation model level

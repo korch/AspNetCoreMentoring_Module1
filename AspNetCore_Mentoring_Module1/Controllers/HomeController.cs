@@ -22,8 +22,8 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         private IEnumerable<Categories> _categories;
         private IEnumerable<Suppliers> _suppliers;
 
-        private IEnumerable<Categories> CategoriesList => _categories ?? (_categories = _dbContext.Categories.ToList());
-        private IEnumerable<Suppliers> SuppliersList => _suppliers ?? (_suppliers = _dbContext.Suppliers.ToList());
+        private IEnumerable<Categories> CategoriesList => _categories ??= _dbContext.Categories.ToList();
+        private IEnumerable<Suppliers> SuppliersList => _suppliers ??= _dbContext.Suppliers.ToList();
 
         public HomeController(ILogger<HomeController> logger, NorthwindContext context, IOptionsProvider optionsProvider, IProductModelProvider productModelProvider)
         {
@@ -39,11 +39,6 @@ namespace AspNetCore_Mentoring_Module1.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-
-        public async Task<IActionResult> Categories()
-        {
-            return View(CategoriesList);
         }
 
         public async Task<IActionResult> Products(int page = 1)

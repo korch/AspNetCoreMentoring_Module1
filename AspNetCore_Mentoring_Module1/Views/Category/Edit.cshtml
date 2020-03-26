@@ -1,0 +1,33 @@
+﻿@model AspNetCore_Mentoring_Module1.Categories;
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit category</h1>
+
+<form asp-antiforgery="true" asp-action="Edit" asp-controller="Category" asp-route-CategoryId="@Model.CategoryId" method="post" enctype="multipart/form-data">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div class="form-group">
+        <label asp-for="@Model.CategoryId" class="control-label">CategoryId</label>
+        <input type="text" asp-for="@Model.CategoryId" class="form-control" disabled="disabled" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.CategoryName" class="control-label">Name</label>
+        <input type="text" asp-for="@Model.CategoryName" class="form-control" />
+        <span asp-validation-for="@Model.CategoryName"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Description" class="control-label">Description</label>
+        <input type="text" asp-for="@Model.Description" class="form-control" />
+        <span asp-validation-for="@Model.Description"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Picture" class="control-label"></label>
+        <input type="file" id="files" asp-for="Picture"/>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+</form>
